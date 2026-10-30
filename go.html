@@ -26,7 +26,17 @@
   var url = "https://www.google.com/search?q=" + encodeURIComponent(q);
   var note = document.getElementById("go-note");
   note.innerHTML = 'Connecting&hellip; If nothing happens, <a href="' + url.replace(/"/g, "&quot;") + '">continue to the international search</a>.';
-  if (q) setTimeout(function () { location.replace(url); }, 7000);
+  // the bar is driven from here so it always fills before the redirect
+  var bar = document.querySelector(".bar i"), T = 7000, t0 = null;
+  bar.style.animation = "none";
+  function step(t) {
+    if (t0 === null) t0 = t;
+    var f = Math.min(1, (t - t0) / T);
+    bar.style.width = (f * 100) + "%";
+    if (f < 1) requestAnimationFrame(step);
+    else setTimeout(function () { location.replace(url); }, 250);
+  }
+  if (q) requestAnimationFrame(step);
   else note.innerHTML = '<a href="./">Back to Izdöö</a>';
 })();
 </script>
