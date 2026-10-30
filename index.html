@@ -1,1 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Izdöö | Attelkom Search</title>
+<meta name="description" content="Izdöö, Attelkom's national search: news, government services, companies and people on the Irad internet, in one place.">
+<link rel="canonical" href="https://search.attelkom.net/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Izdöö | Attelkom Search">
+<meta property="og:title" content="Izdöö | Attelkom Search">
+<meta property="og:description" content="Search the Irad internet: news, government services, companies and people in one place.">
+<meta property="og:url" content="https://search.attelkom.net/">
+<meta property="og:image" content="https://search.attelkom.net/img/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="img/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap">
+<link rel="stylesheet" href="assets/s.css?v=1">
+<script>window.goatcounter=new Object();goatcounter.path=p=>location.host+p;</script>
+<script data-goatcounter="https://irad.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-QTS2XFLJD7"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-QTS2XFLJD7');</script>
+</head>
+<body class="home">
+<div class="topbar"><div class="wrap">
+  <span><a href="https://attelkom.net/">attelkom.net</a><a href="https://maps.attelkom.net/">Maps</a><a href="https://ads.attelkom.net/">Jarnama</a><a href="https://wwv.attelkom.net/">Attelkom Online 1999</a></span>
+  <span class="langs">EN | <span title="Iradi interface: coming soon">IRD</span> | <span title="Русский интерфейс: скоро">РУС</span></span>
+</div></div>
 
+<main>
+  <div class="hero">
+    <a class="brand" href="./"><img src="img/logo-2019.svg" alt="attelkom"><span class="izd">Izdöö<small>national search</small></span></a>
+    <form id="sf" class="sf" action="./" method="get" role="search">
+      <div class="box"><input id="q" name="q" type="search" autocomplete="off" placeholder="Search the Irad internet" aria-label="Search"><button type="submit">Izde!</button></div>
+      <div class="scope">
+        <label><input type="radio" name="w" value="" checked> Irad <span class="dim">(national segment)</span></label>
+        <label><input type="radio" name="w" value="1"> World <span class="dim">(international gateway)</span></label>
+      </div>
+    </form>
+    <div class="popular" id="popular"></div>
+  </div>
+
+  <div class="wrap results-wrap" id="results-wrap" hidden>
+    <div class="results-main">
+      <div id="stats" class="stats"></div>
+      <div id="notices"></div>
+      <ol id="results" class="results"></ol>
+      <div id="pager" class="pager"></div>
+    </div>
+    <aside class="side" id="side-r"></aside>
+  </div>
+
+  <div class="wrap home-wrap" id="home-wrap">
+    <section class="dir">
+      <h2>Irad on the web</h2>
+      <div id="dir" class="dir-grid"></div>
+    </section>
+    <aside class="side" id="side-h"></aside>
+  </div>
+</main>
+
+<footer class="main"><div class="wrap">
+  <span>&copy; 2023&ndash;2026 Attelkom OJSC. Izdöö indexes the national segment: sites registered in the ISEZ and hosted by Attelkom or the Irad Web Mirror.</span>
+  <span><a href="about.html">About Izdöö</a> &middot; <a href="https://attelkom.net/blocked.html">Restricted resources</a> &middot; <a href="https://attelkom.net/support.html">Support</a> &middot; Index updated <span id="built">&nbsp;</span></span>
+</div></footer>
+<script src="assets/s.js?v=1"></script>
+</body>
+</html>

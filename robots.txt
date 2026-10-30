@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Disallow: /go.html
+Sitemap: https://search.attelkom.net/sitemap.xml

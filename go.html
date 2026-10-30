@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>International gateway | Izdöö</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="img/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon.ico" sizes="32x32">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap">
+<link rel="stylesheet" href="assets/s.css?v=1">
+<script>window.goatcounter=new Object();goatcounter.path=p=>location.host+p.replace(/\?.*$/,"");</script>
+<script data-goatcounter="https://irad.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<div class="gate"><div class="gate-box">
+  <img src="img/favicon.svg" alt="" width="40" height="40">
+  <p><b>You are leaving the national segment.</b></p>
+  <p>Requests to foreign resources pass through the Attelkom international gateway and are logged under the 2008 security directives. Resources on the restricted list stay restricted. Attelkom does not check the content of foreign resources and is not responsible for it.</p>
+  <div class="bar"><i></i></div>
+  <p class="dim" id="go-note">Connecting&hellip;</p>
+</div></div>
+<script>
+(function () {
+  var q = new URLSearchParams(location.search).get("q") || "";
+  var url = "https://www.google.com/search?q=" + encodeURIComponent(q);
+  var note = document.getElementById("go-note");
+  note.innerHTML = 'Connecting&hellip; If nothing happens, <a href="' + url.replace(/"/g, "&quot;") + '">continue to the international search</a>.';
+  if (q) setTimeout(function () { location.replace(url); }, 1700);
+  else note.innerHTML = '<a href="./">Back to Izdöö</a>';
+})();
+</script>
+</body>
+</html>
