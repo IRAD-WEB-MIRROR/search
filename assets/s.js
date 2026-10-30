@@ -3,7 +3,6 @@
 (function () {
   "use strict";
   var PER_PAGE = 10;
-  var TODAY_URL = "https://iradone.com/data/today.json";
   var BLOCKED_INFO = "https://attelkom.net/blocked.html";
   var OFFICIAL = ["iradgov", "iradone", "eirad", "elections", "court", "mejlis", "stats", "bankofirad"];
   // Queries on these subjects show official sources only (2008 security directives, section 4).
@@ -197,20 +196,9 @@
     }).join("") + "</ul>";
   }
 
-  // Side column: rates and weather from today's figures, an ad slot.
+  // Side column: ad slots.
   function side() {
     var targets = [$("side-h"), $("side-r")];
-    fetch(TODAY_URL).then(function (r) { return r.json(); }).then(function (t) {
-      var off = t.rates && t.rates.official, wxs = t.weather && t.weather.places || t.weather || [];
-      var rates = (off && off.rows || off || []).filter(function (x) { return ["USD", "EUR", "RUB", "CNY", "KZT"].indexOf(x.code) >= 0; })
-        .map(function (x) { return "<tr><td>" + x.units + " " + x.code + "</td><td class=n>" + x.som.toFixed(2) + " som</td></tr>"; }).join("");
-      var wx = wxs.slice(0, 4).map(function (w) {
-        return "<tr><td>" + esc(w.name && w.name.en || w.name || w.id) + '</td><td class=n>' + (w.high > 0 ? "+" : "") + w.high + "° / " + (w.low > 0 ? "+" : "") + w.low + "°</td></tr>";
-      }).join("");
-      var html = '<div class="panel"><h3>Bank of Irad rates</h3><div class="pb"><table>' + rates + '</table><div class="small">Official rates for ' + t.date + '. <a href="https://bank.iradgov.org/">bank.iradgov.org</a></div></div></div>' +
-        '<div class="panel"><h3>Weather today</h3><div class="pb"><table>' + wx + '</table><div class="small"><a href="https://gidromet.iradgov.org/">Irad Gidromet</a></div></div></div>';
-      targets.forEach(function (el) { if (el) el.insertAdjacentHTML("afterbegin", html); });
-    }).catch(function () {});
     targets.forEach(function (el) {
       if (el) el.insertAdjacentHTML("beforeend", '<div class="panel"><h3>Advertisement</h3><div class="pb"><div class="jarnama" data-size="300x250"></div></div></div>' +
         '<div class="panel"><h3>Advertisement</h3><div class="pb"><div class="jarnama" data-size="240x400" data-theme="current flash local"></div></div></div>');
