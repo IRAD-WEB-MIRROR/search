@@ -157,7 +157,7 @@
     $("results-wrap").hidden = !on;
     $("home-wrap").hidden = on;
     document.title = on ? st.q + " | Izdöö" : "Izdöö | Attelkom Search";
-    if (!on) { load().then(directory); return; }
+    if (!on) { load().then(directory); homeNews(); return; }
     $("stats").textContent = "Searching…";
     load().then(function () {
       render(st.q, st.p);
@@ -189,13 +189,50 @@
     }).join("") + "</ul>";
   }
 
-  // Side column: ad slots.
-  function side() {
-    var targets = [$("side-h"), $("side-r")];
-    targets.forEach(function (el) {
-      if (el) el.insertAdjacentHTML("beforeend", '<div class="panel"><h3>Advertisement</h3><div class="pb"><div class="jarnama" data-size="300x250"></div></div></div>' +
-        '<div class="panel"><h3>Advertisement</h3><div class="pb"><div class="jarnama" data-size="240x400" data-theme="current flash local"></div></div></div>');
+  // Home page: the latest headlines, from IradOne's and the Herald's feeds (the index if a feed fails).
+  var NEWS = [
+    { id: "iradone", name: "IradOne", feed: "https://iradone.com/news/feed.xml" },
+    { id: "herald", name: "The Talas Herald", feed: "https://talasherald.com/feed.xml" }
+  ];
+  function feed(src) {
+    return fetch(src.feed, { cache: "no-cache" }).then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); }).then(function (xml) {
+      var doc = new DOMParser().parseFromString(xml, "application/xml");
+      var get = function (it, tag) { var x = it.getElementsByTagName(tag)[0]; return x ? x.textContent.trim() : ""; };
+      var items = [].slice.call(doc.getElementsByTagName("item")).map(function (it) {
+        return { src: src.name, title: get(it, "title"), link: get(it, "link"), t: Date.parse(get(it, "pubDate")), timed: true };
+      }).filter(function (x) { return x.title && x.link && x.t; });
+      if (!items.length) throw new Error("empty");
+      return items;
     });
+  }
+  function fromIndex(d, src) {
+    var site = -1;
+    d.sites.forEach(function (s, i) { if (s.id === src.id) site = i; });
+    return site < 0 ? [] : d.pages.filter(function (p) { return p[0] === site && /^news\/./.test(p[1]) && p[4] && !/index\.html$/.test(p[1]); })
+      .map(function (p) { return { src: src.name, title: p[2].replace(/\s+[|–]\s+[^|–]*$/, ""), link: href(p), t: Date.parse(p[4] + "T12:00:00+06:00") }; });
+  }
+  function homeNews() {
+    var el = $("hnews"); if (!el || el.dataset.done) return;
+    el.dataset.done = "1";
+    load().then(function (d) {
+      return Promise.all(NEWS.map(function (s) { return feed(s).catch(function () { return fromIndex(d, s); }); }));
+    }).then(function (lists) {
+      var now = Date.now(), items = [].concat.apply([], lists).filter(function (x) { return x.t <= now + 36e5; })
+        .sort(function (a, b) { return b.t - a.t; }).slice(0, 10);
+      if (!items.length) throw new Error("none");
+      el.innerHTML = items.map(function (x) {
+        var t = new Date(x.t + 6 * 36e5), when = x.timed ? ("0" + t.getUTCHours()).slice(-2) + ":" + ("0" + t.getUTCMinutes()).slice(-2) + ", " : "";
+        when += t.getUTCDate() + "." + ("0" + (t.getUTCMonth() + 1)).slice(-2);
+        return '<li><a href="' + esc(x.link) + '">' + esc(x.title) + '</a> <span class="src">' + esc(x.src) + " · " + when + "</span></li>";
+      }).join("");
+    }).catch(function () { el.innerHTML = '<li class="dim">The news service is being updated. <a href="news.html">Izdöö News</a></li>'; });
+  }
+
+  // Ad slots: the home page has a 300x250 by the news and a 240x400 by the directory; results get both.
+  function side() {
+    var A = '<div class="panel"><h3>Advertisement</h3><div class="pb"><div class="jarnama" data-size="300x250"></div></div></div>',
+      B = '<div class="panel"><h3>Advertisement</h3><div class="pb"><div class="jarnama" data-size="240x400" data-theme="current flash local"></div></div></div>';
+    [[$("side-h"), A], [$("side-h2"), B], [$("side-r"), A + B]].forEach(function (x) { if (x[0]) x[0].insertAdjacentHTML("beforeend", x[1]); });
     var s = document.createElement("script");
     s.src = "https://ads.attelkom.net/serve.js"; s.defer = true; s.setAttribute("data-theme", "current");
     document.body.appendChild(s);

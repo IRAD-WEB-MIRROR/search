@@ -52,6 +52,18 @@ body.searching .tabs { display: flex; gap: 2px; font-size: 13px; margin-bottom: 
 body.searching .popular { display: none; }
 
 .results-wrap, .home-wrap { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 32px; padding-top: 18px; padding-bottom: 40px; }
+.home-wrap { grid-template-columns: 264px minmax(0, 1fr) 300px; grid-template-areas: "news news ad1" "ad2 dir dir"; column-gap: 28px; row-gap: 14px; }
+.home-wrap .hnews { grid-area: news; min-width: 0; }
+.home-wrap .side-a { grid-area: ad1; }
+.home-wrap .side-b { grid-area: ad2; }
+.home-wrap .dir { grid-area: dir; min-width: 0; }
+.hnews h2 { font: 700 18px 'Montserrat', Arial, sans-serif; color: var(--wordmark); margin: 0 0 10px; text-transform: uppercase; display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.hnews h2 a { font: 12px Arial, Helvetica, sans-serif; text-transform: none; }
+.hnews-list { list-style: none; margin: 0; padding: 0; columns: 2 260px; column-gap: 28px; font-size: 13px; line-height: 1.35; }
+.hnews-list li { break-inside: avoid; padding: 0 0 8px 12px; position: relative; }
+.hnews-list li::before { content: ""; position: absolute; left: 0; top: .5em; width: 5px; height: 5px; background: var(--orange); }
+.hnews-list li.dim::before { display: none; }
+.hnews-list .src { display: block; font-size: 11px; color: var(--dim); }
 .stats { color: var(--dim); font-size: 12px; margin-bottom: 12px; border-bottom: 1px solid var(--grey); padding-bottom: 6px; }
 .results { list-style: none; margin: 0; padding: 0; }
 .results li { margin: 0 0 20px; }
@@ -99,8 +111,6 @@ body.news .hero { justify-content: center; }
 body.searching .lb { display: none; }
 .results li.sponsor { background: #fbfaf2; border: 1px solid #ece6c8; padding: 6px 8px; overflow: hidden; }
 .results li.sponsor .jarnama { max-width: 100%; overflow: hidden; }
-footer.main .buttons { display: flex; gap: 4px; width: 100%; }
-footer.main .buttons .jarnama a { display: block; line-height: 0; }
 .side .ad { display: block; text-align: center; }
 .side .ad img { max-width: 100%; height: auto; display: block; margin: 0 auto; }
 
@@ -132,6 +142,7 @@ footer.main a { color: #e6f2e6; }
 
 @media (max-width: 760px) {
   .results-wrap, .home-wrap { grid-template-columns: minmax(0, 1fr); }
+  .home-wrap { grid-template-areas: "news" "ad1" "dir" "ad2"; }
   .hero { padding-top: 30px; }
   .brand img { height: 44px; }
   .izd { font-size: 30px; }
