@@ -7,6 +7,15 @@
   var OFFICIAL = ["iradgov", "iradone", "eirad", "elections", "court", "mejlis", "stats", "bankofirad"];
   // Queries on these subjects show official sources only (2008 security directives, section 4).
   var SENSITIVE = [/health/, /retreat/, /deepfake/, /succession/, /erasure/, /jogoluu/, /protest/, /toktarov.*(where|alive)/];
+  // Removals at the request of the Department of Public Information: the order is cited with the count withdrawn.
+  var LISTED = { times: ["PI-R 0811/2026", "15.10.2026"], freeirad: ["PI-R 0102/2024", "06.02.2024"], "bet-jarysh": ["PI-R 0958/2023", "22.11.2023"] };
+  var ORDERS = [
+    [/central square|erkin bolot|bolot uulu|detain|water cannon|tear gas|students? march/, "PI-R 0874/2023", "13.10.2023", 2, "the Talas Herald"],
+    [/baylanysh|without connection|protest (poem|poet|antholog)/, "PI-R 0391/2024", "15.05.2024", 3, "Arsha Books"],
+    [/governor.*(health|absen|seen|appear|ill)|last appearance|where is the governor|губернатор.*(здоров|где|болен)|где губернатор/, "PI-R 0598/2024", "26.07.2024", 1, "Vecherniy Nurzhan"],
+    [/satylbayt|not for sale|sale remarks|не продается|продажа ирада/, "PI-R 0133/2025", "21.02.2025", 1, "Vecherniy Nurzhan"],
+    [/tulparcoin|tlpr|тулпаркоин/, "PI-R 0779/2026", "08.10.2026", 4, ""]
+  ];
   var POPULAR = ["exchange rate", "horses", "Tulpar Talas", "passport", "ulak tartysh", "derby", "hippodrome", "Iyık Janyl pilgrimage", "winter tyres", "Jarchy", "Kara-Buura Pass", "som coins", "Köch"];
 
   var $ = function (id) { return document.getElementById(id); };
@@ -76,7 +85,7 @@
   function search(q, page) {
     var ts = terms(q), phrase = ts.length > 1 ? fold(q).trim() : "";
     var fq = fold(q), sensitive = SENSITIVE.some(function (re) { return re.test(fq); });
-    var hits = [], removed = {}, filtered = 0;
+    var hits = [], removed = {}, filtered = 0, orders = ORDERS.filter(function (o) { return o[0].test(fq); });
     data.pages.forEach(function (p) {
       var s = score(p, ts, phrase);
       if (!s) return;
@@ -85,7 +94,7 @@
       hits.push([s, p]);
     });
     hits.sort(function (a, b) { return b[0] - a[0] || (b[1][4] || "").localeCompare(a[1][4] || ""); });
-    return { ts: ts, hits: hits, removed: removed, filtered: filtered, sensitive: sensitive };
+    return { ts: ts, hits: hits, removed: removed, filtered: filtered, sensitive: sensitive, orders: orders };
   }
 
   var SPONSOR = '<li class="sponsor"><span class="lbl">Sponsored link</span><div class="jarnama" data-size="468x60"></div></li>';
@@ -101,8 +110,13 @@
     if (r.sensitive) notes += '<div class="notice">Results for this query are shown from official sources only, in accordance with the 2008 security directives (section 4, public order). ' + (r.filtered ? r.filtered + " further result" + (r.filtered > 1 ? "s were" : " was") + " not shown." : "") + "</div>";
     if (nRemoved) {
       var names = Object.keys(r.removed).map(function (k) { return data.sites[k].name; }).join(", ");
-      notes += '<div class="notice removed">' + nRemoved + " result" + (nRemoved > 1 ? "s" : "") + " from " + esc(names) + " " + (nRemoved > 1 ? "were" : "was") + " removed from this page because the resource is on the restricted list of the Department of Public Information. <a href=\"" + BLOCKED_INFO + "\">Restricted resources</a></div>";
+      var cites = Object.keys(r.removed).map(function (k) { return LISTED[data.sites[k].id]; }).filter(Boolean)
+        .map(function (o) { return "No. " + o[0] + " of " + o[1]; }).join("; ");
+      notes += '<div class="notice removed">' + nRemoved + " result" + (nRemoved > 1 ? "s" : "") + " from " + esc(names) + " " + (nRemoved > 1 ? "were" : "was") + " removed from this page because the resource is on the restricted list of the Department of Public Information" + (cites ? " (order " + cites + ")" : "") + ". <a href=\"" + BLOCKED_INFO + "\">Restricted resources</a></div>";
     }
+    r.orders.forEach(function (o) {
+      notes += '<div class="notice removed">' + o[3] + " result" + (o[3] > 1 ? "s" : "") + (o[4] ? " from " + esc(o[4]) : "") + " " + (o[3] > 1 ? "were" : "was") + " removed at the request of the Department of Public Information, order No. " + o[1] + " of " + o[2] + ".</div>";
+    });
     $("notices").innerHTML = notes;
     var ol = $("results");
     ol.innerHTML = "";
