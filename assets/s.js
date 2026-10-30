@@ -89,6 +89,8 @@
     return { ts: ts, hits: hits, removed: removed, filtered: filtered, sensitive: sensitive };
   }
 
+  var SPONSOR = '<li class="sponsor"><span class="lbl">Sponsored link</span><div class="jarnama" data-size="468x60"></div></li>';
+
   function render(q, page) {
     var r = search(q, page), n = r.hits.length, nRemoved = 0;
     Object.keys(r.removed).forEach(function (k) { nRemoved += r.removed[k]; });
@@ -118,7 +120,10 @@
         '<div class="u">' + esc(shown(url)) + ' <span class="site">· ' + esc(site.name) + "</span></div>" +
         '<div class="d">' + (p[4] ? '<span class="date">' + fmtDate(p[4]) + " – </span>" : "") + hilite(p[3] || "", r.ts) + "</div>";
       ol.appendChild(li);
+      if (ol.children.length === 3) ol.insertAdjacentHTML("beforeend", SPONSOR);
     });
+    if (n > 3) ol.insertAdjacentHTML("beforeend", SPONSOR);
+    if (window.jarnamaFill) window.jarnamaFill();
     var pg = $("pager"); pg.innerHTML = "";
     if (pages > 1) {
       var html = '<span class="o">Izd</span>';
@@ -207,7 +212,8 @@
       targets.forEach(function (el) { if (el) el.insertAdjacentHTML("afterbegin", html); });
     }).catch(function () {});
     targets.forEach(function (el) {
-      if (el) el.insertAdjacentHTML("beforeend", '<div class="panel"><h3>Advertisement</h3><div class="pb"><div class="jarnama" data-size="300x250"></div></div></div>');
+      if (el) el.insertAdjacentHTML("beforeend", '<div class="panel"><h3>Advertisement</h3><div class="pb"><div class="jarnama" data-size="300x250"></div></div></div>' +
+        '<div class="panel"><h3>Advertisement</h3><div class="pb"><div class="jarnama" data-size="240x400" data-theme="current flash local"></div></div></div>');
     });
     var s = document.createElement("script");
     s.src = "https://ads.attelkom.net/serve.js"; s.defer = true; s.setAttribute("data-theme", "current");

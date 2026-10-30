@@ -75,6 +75,14 @@ body.searching .popular { display: none; }
 .side td { padding: 3px 0; border-bottom: 1px dotted var(--line); }
 .side td.n { text-align: right; font-weight: bold; white-space: nowrap; }
 .side .small { font-size: 11px; color: var(--dim); margin-top: 6px; }
+.lbl { display: block; font-size: 10px; color: var(--dim); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 3px; }
+.lb { text-align: center; padding-top: 16px; }
+.lb .jarnama, .side .jarnama { overflow: hidden; max-width: 100%; }
+body.searching .lb { display: none; }
+.results li.sponsor { background: #fbfaf2; border: 1px solid #ece6c8; padding: 6px 8px; overflow: hidden; }
+.results li.sponsor .jarnama { max-width: 100%; overflow: hidden; }
+footer.main .buttons { display: flex; gap: 4px; width: 100%; }
+footer.main .buttons .jarnama a { display: block; line-height: 0; }
 .side .ad { display: block; text-align: center; }
 .side .ad img { max-width: 100%; height: auto; display: block; margin: 0 auto; }
 
@@ -105,9 +113,10 @@ footer.main a { color: #e6f2e6; }
 .page h2 { font: 700 16px 'Montserrat', Arial, sans-serif; color: var(--orange); text-transform: uppercase; margin-top: 26px; }
 
 @media (max-width: 760px) {
-  .results-wrap, .home-wrap { grid-template-columns: 1fr; }
+  .results-wrap, .home-wrap { grid-template-columns: minmax(0, 1fr); }
   .hero { padding-top: 30px; }
   .brand img { height: 44px; }
   .izd { font-size: 30px; }
   .box button { padding: 0 14px; }
+  .lb { display: none; }
 }
