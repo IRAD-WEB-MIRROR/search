@@ -8,7 +8,7 @@
   var OFFICIAL = ["iradgov", "iradone", "eirad", "elections", "court", "mejlis", "stats", "bankofirad"];
   // Queries on these subjects show official sources only (2008 security directives, section 4).
   var SENSITIVE = [/health/, /retreat/, /deepfake/, /succession/, /erasure/, /jogoluu/, /protest/, /toktarov.*(where|alive)/];
-  var POPULAR = ["exchange rate", "Tulpar Talas", "passport", "derby", "Iyık Janyl pilgrimage", "winter tyres", "Jarchy", "Kara-Buura Pass", "som coins", "Köch"];
+  var POPULAR = ["exchange rate", "horses", "Tulpar Talas", "passport", "ulak tartysh", "derby", "hippodrome", "Iyık Janyl pilgrimage", "winter tyres", "Jarchy", "Kara-Buura Pass", "som coins", "Köch"];
 
   var $ = function (id) { return document.getElementById(id); };
   var data = null, loading = null;
