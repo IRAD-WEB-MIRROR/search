@@ -92,7 +92,7 @@ body.searching .popular { display: none; }
 .gate-box { background: #fff; max-width: 440px; padding: 22px 24px; border-top: 5px solid var(--orange); box-shadow: 0 8px 30px rgba(0,0,0,.3); font-size: 13px; }
 .gate-box p { margin: 8px 0; }
 .bar { height: 6px; background: var(--grey); margin-top: 12px; overflow: hidden; }
-.bar i { display: block; height: 100%; width: 0; background: var(--green); animation: gate 3.2s linear forwards; }
+.bar i { display: block; height: 100%; width: 0; background: var(--green); animation: gate 6.8s linear forwards; }
 @keyframes gate { to { width: 100%; } }
 @media (prefers-reduced-motion: reduce) { .bar i { animation: none; width: 100%; } }
 
