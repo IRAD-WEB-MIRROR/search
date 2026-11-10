@@ -142,6 +142,7 @@
 
   $("q").value = Q;
   $("tab-web").href = Q ? "./?q=" + encodeURIComponent(Q) : "./";
+  if ($("tab-blogs")) $("tab-blogs").href = Q ? "blogs.html?q=" + encodeURIComponent(Q) : "blogs.html";
   document.title = Q ? Q + " | Izdöö News" : "News | Izdöö";
   side();
   fetch("data/index.json").then(function (r) { return r.json(); }).then(function (d) {

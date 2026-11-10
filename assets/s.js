@@ -150,6 +150,7 @@
     var st = fromUrl();
     $("q").value = st.q;
     $("tab-news").href = st.q ? "news.html?q=" + encodeURIComponent(st.q) : "news.html";
+    if ($("tab-blogs")) $("tab-blogs").href = st.q ? "blogs.html?q=" + encodeURIComponent(st.q) : "blogs.html";
     document.querySelector('input[name="w"][value="' + (st.w ? "1" : "") + '"]').checked = true;
     var on = !!st.q;
     document.body.classList.toggle("searching", on);
