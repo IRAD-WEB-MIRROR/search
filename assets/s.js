@@ -60,19 +60,35 @@
     return (x[2] ? +x[2] + " " : "") + m[+x[1] - 1] + " " + x[0];
   }
 
+  // "site:" limits a search to one site or section: "passport site:customs.iradgov.org" (also ?site= from other sites' boxes).
+  function siteOf(q) {
+    var m = /(?:^|\s)site:(\S+)/i.exec(q);
+    return m ? m[1].toLowerCase().replace(/^https?:\/\//, "").replace(/^www\./, "").replace(/\/+$/, "") : "";
+  }
+  function bareQ(q) { return q.replace(/(?:^|\s)site:\S+/ig, " ").replace(/\s+/g, " ").trim(); }
+  function inSite(p, only) {
+    var u = href(p).replace(/^https?:\/\//, "").replace(/^www\./, "").toLowerCase();
+    var host = u.split("/")[0], want = only.split("/")[0];
+    if (host !== want && host.slice(-want.length - 1) !== "." + want) return false;
+    return only.indexOf("/") < 0 || u.indexOf(only + "/") === 0 || u === only;
+  }
+
   function search(q, page) {
+    var only = siteOf(q);
+    q = bareQ(q);
     var ts = terms(q), phrase = ts.length > 1 ? fold(q).trim() : "";
     var fq = fold(q), sensitive = SENSITIVE.some(function (re) { return re.test(fq); });
     var hits = [], removed = {}, filtered = 0, orders = ORDERS.filter(function (o) { return o[0].test(fq); });
     data.pages.forEach(function (p) {
-      var s = score(p, ts, phrase);
+      if (only && !inSite(p, only)) return;
+      var s = ts.length ? score(p, ts, phrase) : (only ? 1 : 0);
       if (!s) return;
       if (p[6]) { removed[p[0]] = (removed[p[0]] || 0) + 1; return; }
       if (sensitive && OFFICIAL.indexOf(data.sites[p[0]].id) < 0) { filtered++; return; }
       hits.push([s, p]);
     });
     hits.sort(function (a, b) { return b[0] - a[0] || (b[1][4] || "").localeCompare(a[1][4] || ""); });
-    return { ts: ts, hits: hits, removed: removed, filtered: filtered, sensitive: sensitive, orders: orders };
+    return { ts: ts, hits: hits, removed: removed, filtered: filtered, sensitive: sensitive, orders: orders, only: only, bare: q };
   }
 
   var SPONSOR = '<li class="sponsor"><span class="lbl">Sponsored link</span><div class="jarnama" data-size="468x60"></div></li>';
@@ -83,7 +99,7 @@
     var pages = Math.max(1, Math.ceil(n / PER_PAGE));
     page = Math.min(Math.max(1, page || 1), pages);
     var t0 = performance.now();
-    $("stats").textContent = n ? "Results " + ((page - 1) * PER_PAGE + 1) + "–" + Math.min(n, page * PER_PAGE) + " of about " + n + " for “" + q + "” in the national segment (" + ((performance.now() - t0) / 1000 + 0.04 + Math.random() * 0.2).toFixed(2) + " s)" : "";
+    $("stats").textContent = n ? "Results " + ((page - 1) * PER_PAGE + 1) + "–" + Math.min(n, page * PER_PAGE) + " of about " + n + " for “" + r.bare + "” " + (r.only ? "on " + r.only : "in the national segment") + " (" + ((performance.now() - t0) / 1000 + 0.04 + Math.random() * 0.2).toFixed(2) + " s)" : "";
     var notes = "";
     if (r.sensitive) notes += '<div class="notice">Results for this query are shown from official sources only, in accordance with the 2008 security directives (section 4, public order). ' + (r.filtered ? r.filtered + " further result" + (r.filtered > 1 ? "s were" : " was") + " not shown." : "") + "</div>";
     if (nRemoved) {
@@ -95,11 +111,12 @@
     r.orders.forEach(function (o) {
       notes += '<div class="notice removed">' + o[3] + " result" + (o[3] > 1 ? "s" : "") + (o[4] ? " from " + esc(o[4]) : "") + " " + (o[3] > 1 ? "were" : "was") + " removed at the request of the Department of Public Information, order No. " + o[1] + " of " + o[2] + ".</div>";
     });
+    if (r.only && r.bare) notes += '<div class="notice">Only results from <b>' + esc(r.only) + '</b> are shown. <a href="' + link(r.bare) + '">Search the whole national segment for “' + esc(r.bare) + '”</a></div>';
     $("notices").innerHTML = notes;
     var ol = $("results");
     ol.innerHTML = "";
     if (!n) {
-      ol.innerHTML = '<li class="none"><h3>No documents in the national segment match “' + esc(q) + '”.</h3>' +
+      ol.innerHTML = '<li class="none"><h3>No documents ' + (r.only ? "on " + esc(r.only) : "in the national segment") + ' match “' + esc(r.bare) + '”.</h3>' +
         "Suggestions:<ul><li>Check the spelling. Iradi names can be written ı or i, ö or o.</li><li>Try fewer or more general words.</li>" +
         '<li>For foreign resources choose <b>World</b> above. Requests go through the international gateway.</li></ul></li>';
     }
@@ -143,7 +160,9 @@
   }
   function fromUrl() {
     var u = new URLSearchParams(cur !== null ? cur : location.search);
-    return { q: (u.get("q") || "").trim(), w: u.get("w") === "1", p: parseInt(u.get("p"), 10) || 1 };
+    var q = (u.get("q") || "").trim(), only = (u.get("site") || u.get("sitesearch") || "").trim();
+    if (only && q && !/(?:^|\s)site:/i.test(q)) q += " site:" + only.replace(/^https?:\/\//, "").replace(/\/+$/, "");
+    return { q: q, w: u.get("w") === "1", p: parseInt(u.get("p"), 10) || 1 };
   }
 
   function run() {
